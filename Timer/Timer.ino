@@ -12,7 +12,7 @@ unsigned long startMillis;
 const unsigned long period = 1000;
 
 int sec1 = 0, sec2 = 0, min1 = 0, min2 = 0;
-const int sec1Pos = 9, sec2Pos = 8, min1Pos =6, min2Pos = 5;
+const int sec1Pos = 9, sec2Pos = 8, min1Pos =6, min2Pos = 5, request = 10;
 int limit;
 bool session = false, breakallow = false,studyallow = true;
 
@@ -22,7 +22,9 @@ void setup() {
   LCDInitial();   
   //Button initialized
   buttonHigh();
-  //
+  //Request Pin
+  pinMode(request,OUTPUT);
+  
   startMillis = millis();
 }
 
