@@ -12,7 +12,7 @@ unsigned long startMillis;
 const unsigned long period = 1000;
 
 int sec1 = 0, sec2 = 0, min1 = 0, min2 = 0;
-const int sec1Pos = 9, sec2Pos = 8, min1Pos =6, min2Pos = 5, request = 10;
+const int sec1Pos = 9, sec2Pos = 8, min1Pos =6, min2Pos = 5, sessRequest = 10;
 int limit;
 bool session = false, breakallow = false,studyallow = true;
 
@@ -23,16 +23,18 @@ void setup() {
   //Button initialized
   buttonHigh();
   //Request Pin
-  pinMode(request,OUTPUT);
+  pinMode(sessRequest,OUTPUT);
+  
   
   startMillis = millis();
 }
 
 void loop() {
     currentMillis = millis();
-    
+    digitalWrite(sessRequest,LOW);
     if (digitalRead(button50min) == LOW && studyallow)
     {
+      
       session50Initial();
     }
 
@@ -43,6 +45,7 @@ void loop() {
     if(session) //Starts the study session
     {
       pomoSession();
+      
     }
 }
 
@@ -89,7 +92,7 @@ void pomoSession() {
           lcd.setCursor(sec1Pos, 1);
           lcd.print(sec1);
           sec2++;
-          if (sec2 > 6) {                       // Handles the second digit of second
+          if (sec2 > 5) {                       // Handles the second digit of second
             sec2 = 0;
             lcd.setCursor(sec2Pos, 1);
             lcd.print(sec2);
@@ -109,6 +112,8 @@ void pomoSession() {
                 sec2 = 0;
                 min1 = 0;
                 min2 = 0;
+                digitalWrite(sessRequest,HIGH);
+                digitalWrite(sessRequest,LOW);
                 LCDInitial();
               }
               else {

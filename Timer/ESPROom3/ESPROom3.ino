@@ -9,20 +9,32 @@ const char* ssid     = "SHAW-FD2A7D";
 const char* password = "0N36X8XKDT22";
 
 const char* resource = "/trigger/SessionReading/with/key/dec_MfvuJNp9Rd7XBZZsOz";
-int count = 0;
+int sessionCount = 0;
+int breakCount = 0;
 const char* server = "maker.ifttt.com";
-int requestpin = 2;
+int sessionPin = 2;
+int breakPin = 0;
+
+unsigned long currentMillis = 0;
+unsigned long startMillis;
+const unsigned long period = 1000;
+
 void setup() {
   Serial.begin(115200); 
   initWifi();
-  pinMode(request,INPUT_PULLUP);
-
-  digitalWrite(request,HIGH);
-  digitalWrite(request,LOW);
+  pinMode(sessionPin,INPUT);
+  pinMode(breakPin,INPUT);  
+  startMillis = millis();
 }
 
 void loop() {
   // put your main code here, to run repeatedly:
+  
+    startMillis  = currentMillis;
+    if(digitalRead(sessionPin) == HIGH)
+    {
+      makeIFTTTRequest();
+    }
   
 }
 
@@ -49,7 +61,8 @@ void initWifi() {
 }
 
 void makeIFTTTRequest() {
-  count++;
+  
+    sessionCount++;
   Serial.print("Connecting to "); 
   Serial.print(server);
   
@@ -65,8 +78,10 @@ void makeIFTTTRequest() {
   
   Serial.print("Request resource: "); 
   Serial.println(resource);
+ 
 
-  String jsonObject = String("{\"value1\":\"") + "Session Ended" + "\",\"value2\":\"" + count + "\",\"value3\":\""  + "\"}";
+  String jsonObject = String("{\"value1\":\"") + "Session Ended" + "\",\"value2\":\"" + sessionCount + "\",\"value3\":\""  + "\"}";
+  
       
   client.println(String("POST ") + resource + " HTTP/1.1");
   client.println(String("Host: ") + server); 
@@ -75,6 +90,7 @@ void makeIFTTTRequest() {
   client.println(jsonObject.length());
   client.println();
   client.println(jsonObject);
+  Serial.println(jsonObject);
         
   int timeout = 5 * 10; // 5 seconds             
   while(!!!client.available() && (timeout-- > 0)){
